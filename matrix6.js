@@ -63,12 +63,34 @@ function flow (col, head, len, visible) {
 
 
 $(function init () {
+    screen.root = $('#screen');
+
+    reset();
+
+    setTimeout(function () {
+        next_frame();
+    }, frame_delay_min);
+
+    $(window).resize(reset).keydown(function (event) {
+        if (event.which == 13) {
+            easter_egg.trigger = true;
+        } else if (event.which == 32) {
+            pause = !pause;
+            if (!pause && paused) {
+                setTimeout(function () {
+                    next_frame();
+                }, frame_delay_min);
+            }
+        }
+    });
+});
+
+
+function reset () {
     var window_width = window.innerWidth;
     var window_height = window.innerHeight;
     var text_width = $('#sample').width();
     var text_height = $('#sample').height();
-
-    screen.root = $('#screen');
 
     screen.width = Math.floor(window_width / text_width);
     screen.height = Math.floor(window_height / text_height);
@@ -77,7 +99,6 @@ $(function init () {
 
     screen.cell = [];
     screen.flow = [];
-
     for (var r = 0; r < screen.height; r++) {
         var row = $('<div class="row">');
         screen.cell[r] = [];
@@ -94,24 +115,7 @@ $(function init () {
         }
         screen.root.append(row);
     }
-
-    setTimeout(function () {
-        next_frame();
-    }, frame_delay_min);
-
-    $(window).keydown(function (event) {
-        if (event.which == 13) {
-            easter_egg.trigger = true;
-        } else if (event.which == 32) {
-            pause = !pause;
-            if (!pause && paused) {
-                setTimeout(function () {
-                    next_frame();
-                }, frame_delay_min);
-            }
-        }
-    });
-});
+}
 
 
 function rand_char (row) {
