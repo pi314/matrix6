@@ -12,6 +12,12 @@ body {
 }
 
 
+#sample {
+    position: fixed;
+    color: transparent;
+}
+
+
 .bright {
     color: #00dd00;
     text-shadow: lime 0 0 5px;
@@ -35,7 +41,18 @@ body {
 }
 
 
-#sample {
-    position: fixed;
-    color: transparent;
+.gold.bright {
+    color: #ffff00;
+    text-shadow: #ffff00 0 0 5px;
+}
+
+
+.gold.dark {
+    color: #CCCC00;
+}
+
+
+.gold.head {
+    color: white;
+    text-shadow: white 0 0 5px;
 }
