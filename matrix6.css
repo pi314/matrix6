@@ -24,6 +24,12 @@ body {
 }
 
 
+.head {
+    color: lightgray;
+    text-shadow: lime 0 0 5px;
+}
+
+
 .black {
     visibility: hidden;
 }

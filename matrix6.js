@@ -20,11 +20,16 @@ function flow (col, head, len, visible) {
     this.tail = head - len;
 
     this.move = function () {
+        if (this.visible && 0 <= this.head && this.head < screen.height) {
+            screen.cell[this.head][this.col].text(rand_char());
+            screen.cell[this.head][this.col].removeClass('black bright dark head');
+            screen.cell[this.head][this.col].addClass(rand_bright() ? 'bright' : 'dark');
+        }
         this.head++;
         if (this.visible && 0 <= this.head && this.head < screen.height) {
             screen.cell[this.head][this.col].text(rand_char());
             screen.cell[this.head][this.col].removeClass('black bright dark');
-            screen.cell[this.head][this.col].addClass(rand_bright() ? 'bright' : 'dark');
+            screen.cell[this.head][this.col].addClass('head');
         }
 
         if (this.visible && 0 <= this.tail && this.tail < screen.height) {
