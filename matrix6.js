@@ -34,11 +34,6 @@ function flow (col, head, len, visible) {
     this.head = head;
     this.tail = head - len;
 
-    if (easter_egg.trigger) {
-        this.gold = true;
-        easter_egg.trigger = false;
-    }
-
     this.move = function () {
         if (this.visible && 0 <= this.head && this.head < screen.height) {
             screen.cell[this.head][this.col].removeClass('head');
@@ -192,6 +187,10 @@ function rand_len () {
 
 
 function rand_gold () {
+    if (easter_egg.trigger) {
+        easter_egg.trigger = false;
+        return true;
+    }
     return (Math.floor(Math.random() * 300) == 0) ? true : false;
 }
 
