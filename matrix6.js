@@ -10,6 +10,7 @@ var screen = {
     root: undefined,
     cell: [],
     flow: [],
+    resized: false,
 };
 
 
@@ -35,7 +36,7 @@ function flow (col, head, len, visible) {
 
     this.move = function () {
         if (this.visible && 0 <= this.head && this.head < screen.height) {
-            screen.cell[this.head][this.col].removeClass('black bright dark head');
+            screen.cell[this.head][this.col].removeClass('bright dark head');
             screen.cell[this.head][this.col].addClass(rand_bright() ? 'bright' : 'dark');
         }
         this.head++;
@@ -71,7 +72,9 @@ $(function init () {
         next_frame();
     }, frame_delay_min);
 
-    $(window).resize(reset).keydown(function (event) {
+    $(window).resize(function () {
+        screen.resized = true;
+    }).keydown(function (event) {
         if (event.which == 13) {
             easter_egg.trigger = true;
         } else if (event.which == 32) {
@@ -159,6 +162,16 @@ function rand_gold () {
 
 
 function next_frame () {
+    if (screen.resized) {
+        reset();
+        screen.resized = false;
+
+        setTimeout(function () {
+            next_frame();
+        }, 500);
+        return;
+    }
+
     for (var c = 0; c < screen.width; c++) {
         for (var f = 0; f < screen.flow[c].length; f++) {
             screen.flow[c][f].move();
