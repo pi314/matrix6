@@ -198,6 +198,14 @@ function rand_gold () {
 function next_frame () {
     screen.paused = false;
 
+    if (screen.user.pause) {
+        screen.paused = true;
+    } else {
+        setTimeout(function () {
+            next_frame();
+        }, frame_delay_min);
+    }
+
     if (screen.user.resized) {
         reset();
         screen.user.resized = false;
@@ -222,14 +230,6 @@ function next_frame () {
         screen.flow[c] = screen.flow[c].filter(function (elem) {
             return !elem.finished();
         })
-    }
-
-    if (screen.user.pause) {
-        screen.paused = true;
-    } else {
-        setTimeout(function () {
-            next_frame();
-        }, frame_delay_min);
     }
 
     var today = new Date();
