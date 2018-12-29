@@ -90,13 +90,6 @@ $(function init () {
         if (screen.user.single_click_timer) {
             clearTimeout(screen.user.single_click_timer);
             screen.user.single_click_timer = undefined;
-            toggle_pause();
-            return;
-        }
-
-        screen.user.single_click_timer = setTimeout(function () {
-            screen.user.single_click_timer = undefined;
-
             if (screen.paused) {
                 return;
             }
@@ -106,6 +99,12 @@ $(function init () {
             } else {
                 screen.theme = 'green';
             }
+            return;
+        }
+
+        screen.user.single_click_timer = setTimeout(function () {
+            screen.user.single_click_timer = undefined;
+            toggle_pause();
         }, double_click_delay);
     });
 });
