@@ -1,7 +1,5 @@
 var frame_delay_min = 70;
-
-var pause = false;
-var paused = false;
+var double_click_delay = 200;
 
 
 var screen = {
@@ -10,7 +8,14 @@ var screen = {
     root: undefined,
     cell: [],
     flow: [],
-    resized: false,
+    paused: false,
+    theme: 'green',
+    user: {
+        pause: false,
+        resized: false,
+        double_click: false,
+        single_click_timer: undefined,
+    },
 };
 
 
@@ -36,15 +41,16 @@ function flow (col, head, len, visible) {
 
     this.move = function () {
         if (this.visible && 0 <= this.head && this.head < screen.height) {
-            screen.cell[this.head][this.col].removeClass('bright dark head');
-            screen.cell[this.head][this.col].addClass(rand_bright() ? 'bright' : 'dark');
+            screen.cell[this.head][this.col].removeClass('head');
         }
         this.head++;
         if (this.visible && 0 <= this.head && this.head < screen.height) {
-            screen.cell[this.head][this.col].removeClass('black bright dark head gold');
+            screen.cell[this.head][this.col].removeClass();
+            screen.cell[this.head][this.col].addClass('cell');
+            screen.cell[this.head][this.col].addClass(this.gold ? 'gold' : screen.theme);
+            screen.cell[this.head][this.col].addClass(rand_bright() ? 'bright' : 'dark');
             screen.cell[this.head][this.col].addClass('head');
             if (this.gold) {
-                screen.cell[this.head][this.col].addClass('gold');
                 screen.cell[this.head][this.col].text(rand_char(this.head));
             } else {
                 screen.cell[this.head][this.col].text(rand_char());
@@ -73,20 +79,50 @@ $(function init () {
     }, frame_delay_min);
 
     $(window).resize(function () {
-        screen.resized = true;
+        screen.user.resized = true;
     }).keydown(function (event) {
         if (event.which == 13) {
             easter_egg.trigger = true;
         } else if (event.which == 32) {
-            pause = !pause;
-            if (!pause && paused) {
-                setTimeout(function () {
-                    next_frame();
-                }, frame_delay_min);
-            }
+            toggle_pause();
         }
+    }).mousedown(function () {
+        if (screen.user.single_click_timer) {
+            clearTimeout(screen.user.single_click_timer);
+            screen.user.single_click_timer = undefined;
+            toggle_pause();
+            return;
+        }
+
+        screen.user.single_click_timer = setTimeout(function () {
+            screen.user.single_click_timer = undefined;
+
+            if (screen.paused) {
+                return;
+            }
+
+            if (screen.theme == 'green') {
+                screen.theme = 'cyan';
+            } else {
+                screen.theme = 'green';
+            }
+        }, double_click_delay);
     });
 });
+
+
+function toggle_pause () {
+    if (screen.user.pause != screen.paused) {
+        return;
+    }
+
+    screen.user.pause = !screen.user.pause;
+    if (!screen.user.pause && screen.paused) {
+        setTimeout(function () {
+            next_frame();
+        }, frame_delay_min);
+    }
+}
 
 
 function reset () {
@@ -162,9 +198,11 @@ function rand_gold () {
 
 
 function next_frame () {
-    if (screen.resized) {
+    screen.paused = false;
+
+    if (screen.user.resized) {
         reset();
-        screen.resized = false;
+        screen.user.resized = false;
 
         setTimeout(function () {
             next_frame();
@@ -188,8 +226,8 @@ function next_frame () {
         })
     }
 
-    if (pause) {
-        paused = true;
+    if (screen.user.pause) {
+        screen.paused = true;
     } else {
         setTimeout(function () {
             next_frame();

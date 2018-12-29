@@ -18,26 +18,26 @@ body {
 }
 
 
-.bright {
+.black {
+    visibility: hidden;
+}
+
+
+.green.bright {
     color: #00dd00;
     text-shadow: lime 0 0 5px;
 }
 
 
-.dark {
+.green.dark {
     color: green;
     text-shadow: green 0 0 5px;
 }
 
 
-.head {
+.green.head {
     color: lightgray;
     text-shadow: lime 0 0 5px;
-}
-
-
-.black {
-    visibility: hidden;
 }
 
 
@@ -53,6 +53,23 @@ body {
 
 
 .gold.head {
+    color: white;
+    text-shadow: white 0 0 5px;
+}
+
+
+.cyan.bright {
+    color: cyan;
+    text-shadow: cyan 0 0 5px;
+}
+
+
+.cyan.dark {
+    color: #00cccc;
+}
+
+
+.cyan.head {
     color: white;
     text-shadow: white 0 0 5px;
 }
