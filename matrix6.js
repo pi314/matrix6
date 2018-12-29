@@ -1,4 +1,5 @@
 var frame_delay_min = 70;
+var frame_delay_resize = 500;
 var double_click_delay = 200;
 
 
@@ -10,6 +11,7 @@ var screen = {
     flow: [],
     paused: false,
     theme: 'green',
+    frame_timer: undefined,
     user: {
         pause: false,
         resized: false,
@@ -69,9 +71,7 @@ $(function init () {
 
     reset();
 
-    setTimeout(function () {
-        next_frame();
-    }, frame_delay_min);
+    screen.frame_timer = setTimeout(next_frame, frame_delay_min);
 
     $(window).resize(function () {
         screen.user.resized = true;
@@ -112,9 +112,10 @@ function toggle_pause () {
 
     screen.user.pause = !screen.user.pause;
     if (!screen.user.pause && screen.paused) {
-        setTimeout(function () {
-            next_frame();
-        }, frame_delay_min);
+        if (screen.frame_timer) {
+            clearTimeout(screen.frame_timer);
+        }
+        screen.frame_timer = setTimeout(next_frame, frame_delay_min);
     }
 }
 
@@ -196,23 +197,19 @@ function rand_gold () {
 
 
 function next_frame () {
+    screen.frame_timer = undefined;
     screen.paused = false;
 
     if (screen.user.pause) {
         screen.paused = true;
-    } else {
-        setTimeout(function () {
-            next_frame();
-        }, frame_delay_min);
+        return;
     }
 
     if (screen.user.resized) {
         reset();
         screen.user.resized = false;
 
-        setTimeout(function () {
-            next_frame();
-        }, 500);
+        screen.frame_timer = setTimeout(next_frame, frame_delay_resize);
         return;
     }
 
@@ -236,4 +233,6 @@ function next_frame () {
     easter_egg.year = today.getFullYear();
     easter_egg.month = today.getMonth();
     easter_egg.day = today.getDate();
+
+    screen.frame_timer = setTimeout(next_frame, frame_delay_min);
 }
