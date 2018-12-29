@@ -158,7 +158,7 @@ function reset () {
 
 
 function rand_char (row) {
-    var sample_space = '1234567890-=!@#$%^&*()_+qwertyuiop[]QWERTYUIOP{}asdfghjkl;ASDFGHJKL:zxcvbnm/ZXCVBNM<>?';
+    var sample_space = '1234567890-=!@#$%^&*()+qwertyuiop[]QWERTYUIOP{}asdfghjkl;ASDFGHJKL:zxcvbnm/ZXCVBNM<>?';
     var idx = Math.floor(Math.random() * sample_space.length);
 
     if (row != undefined) {
