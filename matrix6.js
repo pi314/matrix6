@@ -156,7 +156,7 @@ function rand_char (row) {
     var idx = Math.floor(Math.random() * sample_space.length);
 
     if (row != undefined) {
-        if (easter_egg.month == 12 && easter_egg.day == 25) {
+        if (easter_egg.month == 11 && easter_egg.day == 25) {
             sample_space = 'MerryChristmas!!!';
             idx = row % sample_space.length;
         }
@@ -234,6 +234,6 @@ function next_frame () {
 
     var today = new Date();
     easter_egg.year = today.getFullYear();
-    easter_egg.month = today.getUTCMonth();
+    easter_egg.month = today.getMonth();
     easter_egg.day = today.getDate();
 }
