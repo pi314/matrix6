@@ -68,19 +68,22 @@ function flow (col, head, len, visible) {
 
 $(function init () {
     screen.root = $('#screen');
+    screen.root.empty();
 
-    reset();
+    soft_reset();
 
     screen.frame_timer = setTimeout(next_frame, frame_delay_min);
 
     $(window).resize(function () {
         screen.user.resized = true;
+
     }).keydown(function (event) {
         if (event.which == 13) {
             easter_egg.trigger = true;
         } else if (event.which == 32) {
             toggle_pause();
         }
+
     }).mousedown(function () {
         if (screen.user.single_click_timer) {
             clearTimeout(screen.user.single_click_timer);
@@ -120,34 +123,79 @@ function toggle_pause () {
 }
 
 
-function reset () {
+function soft_reset () {
     var window_width = window.innerWidth;
     var window_height = window.innerHeight;
     var text_width = $('#sample').width();
     var text_height = $('#sample').height();
 
+    var screen_height_old = 0;
+
+    if (screen.height > 0) {
+        screen_height_old = screen.height;
+    }
+
     screen.width = Math.floor(window_width / text_width);
     screen.height = Math.floor(window_height / text_height);
 
-    screen.root.empty();
+    // Cut off unnecessary rows
+    for (var r = screen.height; r < screen.cell.length; r++) {
+        screen.cell[r][0].parent().remove();
+    }
+    screen.cell = screen.cell.slice(0, screen.height);
 
-    screen.cell = [];
-    screen.flow = [];
+    // Cut off unnecessary columns
+    for (var r = 0; r < screen.cell.length; r++) {
+        for (var c = screen.width; c < screen.cell[r].length; c++) {
+            screen.cell[r][c].remove();
+        }
+        screen.cell[r] = screen.cell[r].slice(0, screen.width);
+        screen.flow = screen.flow.slice(0, screen.width);
+    }
+
+    // Append rows and columns if necessary
     for (var r = 0; r < screen.height; r++) {
-        var row = $('<div class="row">');
-        screen.cell[r] = [];
-        for (var c = 0; c < screen.width; c++) {
+        var new_row = false;
+        var row = null;
+        if (r >= screen.cell.length) {
+            new_row = true;
+        }
+
+        if (new_row) {
+            row = $('<div class="row">');
+            screen.cell[r] = [];
+        } else {
+            row = screen.cell[r][0].parent();
+        }
+
+        for (var c = screen.cell[r].length; c < screen.width; c++) {
+            new_col = true;
             screen.cell[r][c] = $('<span class="cell black">');
             screen.cell[r][c].text('|');
             row.append(screen.cell[r][c]);
+        }
 
-            if (c % 2 == 0) {
-                screen.flow[c] = [new flow(c, -rand_head(), rand_len(), rand_bright())];
-            } else {
-                screen.flow[c] = [];
+        if (new_row) {
+            screen.root.append(row);
+        }
+    }
+
+    // Append new flows if necessary
+    for (var c = screen.flow.length; c < screen.width; c++) {
+        if (c % 2 == 0) {
+            screen.flow[c] = [new flow(c, -rand_head(), rand_len(), rand_bright())];
+        } else {
+            screen.flow[c] = [];
+        }
+    }
+
+    // Prevent flows out of screen (before resizing) to suddently show up
+    for (var c = 0; c < screen.width; c++) {
+        for (var f = 0; f < screen.flow[c].length; f++) {
+            if (screen.flow[c][f].tail >= screen_height_old || screen.flow[c][f].head >= screen_height_old) {
+                screen.flow[c][f].visible = false;
             }
         }
-        screen.root.append(row);
     }
 }
 
@@ -206,7 +254,7 @@ function next_frame () {
     }
 
     if (screen.user.resized) {
-        reset();
+        soft_reset();
         screen.user.resized = false;
 
         screen.frame_timer = setTimeout(next_frame, frame_delay_resize);
