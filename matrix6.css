@@ -12,6 +12,11 @@ body {
 }
 
 
+#screen {
+    white-space: nowrap;
+}
+
+
 #sample {
     position: fixed;
     color: transparent;
