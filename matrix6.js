@@ -97,6 +97,21 @@ function flow (col, head, len, visible) {
 $(function init () {
     console.log('https://github.com/pi314/matrix6/');
 
+    var param = window.location.search.replace(/^\?/g, '').split('&');
+    for (let i in param) {
+        console.log(param);
+        var tmp = param[i].split('=');
+        var key = tmp[0];
+        var val = tmp[1];
+
+        switch (key.toLowerCase()) {
+            case 'delay':
+                frame_delay_min = parseInt(val);
+                frame_delay_min = Math.max(0, 30);
+                break;
+        }
+    }
+
     screen.root = $('#screen');
     screen.root.empty();
 
