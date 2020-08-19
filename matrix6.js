@@ -99,18 +99,24 @@ $(function init () {
 
     var param = window.location.search.replace(/^\?/g, '').split('&');
     for (let i in param) {
-        console.log(param);
         var tmp = param[i].split('=');
-        var key = tmp[0];
-        var val = tmp[1];
+        var key = tmp[0].toLowerCase();
+        var val = JSON.parse(tmp[1]);
 
-        switch (key.toLowerCase()) {
-            case 'delay':
-                frame_delay_min = parseInt(val);
-                frame_delay_min = Math.max(0, 30);
-                break;
+        if (key == 'delay' && (typeof val == typeof 1)) {
+            frame_delay_min = Math.max(30, val);
+
+        } else if (key == 'christmas' && (typeof val == typeof true || typeof val == typeof 1)) {
+            easter_egg.christmas = val;
+
+        } else if (key == 'new_year' && (typeof val == typeof true || typeof val == typeof 1)) {
+            easter_egg.christmas = val;
         }
     }
+
+    console.log('delay =', frame_delay_min);
+    console.log('christmas =', easter_egg.christmas);
+    console.log('new_year =', easter_egg.new_year);
 
     screen.root = $('#screen');
     screen.root.empty();
@@ -245,34 +251,54 @@ function soft_reset () {
 }
 
 
-function easter_egg_trigger () {
-    let easter_egg_text = '';
+function range (a, b, step) {
+    let ret = [];
 
-    if (easter_egg.christmas) {
-        easter_egg_text = 'MerryChristmas';
-    } else if (easter_egg.new_year) {
-        easter_egg_text = 'HappyNewYear';
-    } else {
-        let space = [
-            'You are good',
-            'Be nice to yourself',
-            "Don't worry",
-            'Everything will be fine',
-            'Believe in yourself',
-            'Follow your heart',
-            'Dawn will come',
-            'Stay determined',
-            'Have a nice day',
-        ];
-
-        let idx = 0;
-        do {
-            idx = Math.floor(Math.random() * space.length);
-        } while(easter_egg.last_easter_egg === idx);
-
-        easter_egg_text = space[idx];
-        easter_egg.last_easter_egg = idx;
+    for (let i = a; i < b; i += step) {
+        ret.push(i);
     }
+
+    return ret;
+}
+
+
+function sample (sample_space) {
+    let idx = Math.floor(Math.random() * sample_space.length);
+    return sample_space[idx];
+}
+
+
+function easter_egg_trigger () {
+    let easter_egg_sample_space = [
+        'You are good',
+        'Be nice to yourself',
+        "Don't worry",
+        'Everything will be fine',
+        'Believe in yourself',
+        'Follow your heart',
+        'Dawn will come',
+        'Stay determined',
+        'Have a nice day',
+    ];
+
+    let ary = range(0, easter_egg_sample_space.length);
+    if (easter_egg.christmas) {
+        ary.forEach(function () {
+            easter_egg_sample_space.push('MerryChristmas');
+        });
+    }
+
+    if (easter_egg.new_year) {
+        ary.forEach(function () {
+            easter_egg_sample_space.push('HappyNewYear');
+        });
+    }
+
+    let easter_egg_text = '';
+    do {
+        easter_egg_text = sample(easter_egg_sample_space);
+    } while(easter_egg.last_easter_egg === easter_egg_text);
+    easter_egg.last_easter_egg = easter_egg_text;
 
     if (!easter_egg_text.length) {
         return;

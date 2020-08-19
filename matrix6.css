@@ -23,6 +23,11 @@ body {
 }
 
 
+.cell {
+    white-space: pre;
+}
+
+
 .black {
     visibility: hidden;
 }
