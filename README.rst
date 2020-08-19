@@ -12,3 +12,4 @@ URL Parameters
 * ``delay`` in milliseconds, default value: 70
 * ``christmas=true|false`` enable / disable Christmas Easter egg
 * ``new_year=true|false`` enable / disable New Year Easter egg
+* ``char=str`` charaster space

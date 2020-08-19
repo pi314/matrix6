@@ -2,6 +2,7 @@ var frame_delay_min = 70;
 var frame_delay_resize = 500;
 var double_click_delay = 200;
 var easter_egg_banner_durability = 3;   // How many flows could wash a banner
+var char_space = '1234567890-=!@#$%^&*()+qwertyuiop[]QWERTYUIOP{}asdfghjkl;ASDFGHJKL:zxcvbnm/ZXCVBNM<>?';
 
 
 var screen = {
@@ -66,7 +67,7 @@ function flow (col, head, len, visible) {
 
             } else {
                 classes.push(screen.theme);
-                screen.cell[this.head][this.col].text(rand_char(this.head, this.col));
+                screen.cell[this.head][this.col].text(sample(char_space));
             }
 
             screen.cell[this.head][this.col].addClass(classes);
@@ -101,7 +102,15 @@ $(function init () {
     for (let i in param) {
         var tmp = param[i].split('=');
         var key = tmp[0].toLowerCase();
-        var val = JSON.parse(tmp[1]);
+        try {
+            var val = JSON.parse(tmp[1]);
+        } catch (e) {
+            if (typeof e === typeof SyntaxError()) {
+                var val = tmp[1];
+            } else {
+                throw e;
+            }
+        }
 
         if (key == 'delay' && (typeof val == typeof 1)) {
             frame_delay_min = Math.max(30, val);
@@ -111,12 +120,27 @@ $(function init () {
 
         } else if (key == 'new_year' && (typeof val == typeof true || typeof val == typeof 1)) {
             easter_egg.new_year = val;
+
+        } else if (key == 'char' && (typeof val == typeof '')) {
+            try {
+                char_space = decodeURIComponent(val);
+            } catch (e) {
+                if (typeof e === typeof URIError()) {
+                    console.log('Invalid string:', val);
+                } else {
+                    throw e;
+                }
+            }
+
+        } else {
+            console.log('Unknown option:', key);
         }
     }
 
     console.log('delay =', frame_delay_min);
     console.log('christmas =', easter_egg.christmas);
     console.log('new_year =', easter_egg.new_year);
+    console.log('char =', char_space);
 
     screen.root = $('#screen');
     screen.root.empty();
@@ -342,14 +366,6 @@ function easter_egg_trigger () {
 
 function serialize_coord (row, col) {
     return [row, col].join(',')
-}
-
-
-function rand_char (row, col) {
-    let sample_space = '1234567890-=!@#$%^&*()+qwertyuiop[]QWERTYUIOP{}asdfghjkl;ASDFGHJKL:zxcvbnm/ZXCVBNM<>?';
-    let idx = Math.floor(Math.random() * sample_space.length);
-
-    return sample_space[idx];
 }
 
 
