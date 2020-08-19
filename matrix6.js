@@ -281,16 +281,16 @@ function easter_egg_trigger () {
         'Have a nice day',
     ];
 
-    let ary = range(0, easter_egg_sample_space.length);
+    let ary = range(0, easter_egg_sample_space.length * 2);
     if (easter_egg.christmas) {
         ary.forEach(function () {
-            easter_egg_sample_space.push('MerryChristmas');
+            easter_egg_sample_space.push('Merry Christmas');
         });
     }
 
     if (easter_egg.new_year) {
         ary.forEach(function () {
-            easter_egg_sample_space.push('HappyNewYear');
+            easter_egg_sample_space.push('Happy New Year');
         });
     }
 
