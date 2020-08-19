@@ -110,7 +110,7 @@ $(function init () {
             easter_egg.christmas = val;
 
         } else if (key == 'new_year' && (typeof val == typeof true || typeof val == typeof 1)) {
-            easter_egg.christmas = val;
+            easter_egg.new_year = val;
         }
     }
 
