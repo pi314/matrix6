@@ -1,6 +1,7 @@
 var frame_delay_min = 70;
 var frame_delay_resize = 500;
 var double_click_delay = 200;
+var easter_egg_banner_durability = 3;   // How many flows could wash a banner
 
 
 var screen = {
@@ -25,13 +26,15 @@ var easter_egg = {
     year: 0,
     month: 0,
     day: 0,
-    trigger: false,
+    banner: {},
+    christmas: false,
+    new_year: false,
+    last_easter_egg: undefined,
 };
 
 
 function flow (col, head, len, visible) {
     this.visible = visible;
-    this.gold = this.visible ? rand_gold() : false;
     this.col = col;
     this.head = head;
     this.tail = head - len;
@@ -43,19 +46,44 @@ function flow (col, head, len, visible) {
         this.head++;
         if (this.visible && 0 <= this.head && this.head < screen.height) {
             screen.cell[this.head][this.col].removeClass();
-            screen.cell[this.head][this.col].addClass('cell');
-            screen.cell[this.head][this.col].addClass(this.gold ? 'gold' : screen.theme);
-            screen.cell[this.head][this.col].addClass(rand_bright() ? 'bright' : 'dark');
-            screen.cell[this.head][this.col].addClass('head');
-            if (this.gold) {
-                screen.cell[this.head][this.col].text(rand_char(this.head));
+
+            let classes = ['cell'];
+            classes.push(rand_bright() ? 'bright' : 'dark');
+            classes.push('head');
+
+            let key = serialize_coord(this.head, this.col);
+            if (typeof easter_egg.banner[key] === 'string') {
+                screen.cell[this.head][this.col].text(easter_egg.banner[key]);
+                easter_egg.banner[key] = easter_egg_banner_durability;
+                classes.push('gold');
+
+            } else if (typeof easter_egg.banner[key] === 'number') {
+                easter_egg.banner[key] -= 1;
+                if (easter_egg.banner[key] <= 0) {
+                    delete easter_egg.banner[key];
+                }
+                classes.push('gold');
+
             } else {
-                screen.cell[this.head][this.col].text(rand_char());
+                classes.push(screen.theme);
+                screen.cell[this.head][this.col].text(rand_char(this.head, this.col));
             }
+
+            screen.cell[this.head][this.col].addClass(classes);
         }
 
+        let key = serialize_coord(this.tail, this.col);
         if (this.visible && 0 <= this.tail && this.tail < screen.height) {
-            screen.cell[this.tail][this.col].addClass('black');
+            if (typeof easter_egg.banner[key] === 'string') {
+                screen.cell[this.tail][this.col].text(easter_egg.banner[key]);
+                screen.cell[this.tail][this.col].addClass('gold');
+                easter_egg.banner[key] = easter_egg_banner_durability;
+
+            } else if (typeof easter_egg.banner[key] === 'number') {
+
+            } else {
+                screen.cell[this.tail][this.col].addClass('black');
+            }
         }
         this.tail++;
     };
@@ -79,7 +107,7 @@ $(function init () {
 
     }).keydown(function (event) {
         if (event.which == 13) {
-            easter_egg.trigger = true;
+            easter_egg_trigger();
         } else if (event.which == 32) {
             toggle_pause();
         }
@@ -200,21 +228,83 @@ function soft_reset () {
 }
 
 
-function rand_char (row) {
-    var sample_space = '1234567890-=!@#$%^&*()+qwertyuiop[]QWERTYUIOP{}asdfghjkl;ASDFGHJKL:zxcvbnm/ZXCVBNM<>?';
-    var idx = Math.floor(Math.random() * sample_space.length);
+function easter_egg_trigger () {
+    let easter_egg_text = '';
 
-    if (row != undefined) {
-        if (easter_egg.month == 11 && easter_egg.day == 25) {
-            sample_space = 'MerryChristmas!!!';
-            idx = row % sample_space.length;
-        }
+    if (easter_egg.christmas) {
+        easter_egg_text = 'MerryChristmas';
+    } else if (easter_egg.new_year) {
+        easter_egg_text = 'HappyNewYear';
+    } else {
+        let space = [
+            'You are good',
+            'Be nice to yourself',
+            "Don't worry",
+            'Everything will be fine',
+            'Believe in yourself',
+            'Follow your heart',
+            'Dawn will come',
+            'Stay determined',
+            'Have a nice day',
+        ];
 
-        if ((easter_egg.month == 11 && easter_egg.day >= 29) || (easter_egg.month == 0 && easter_egg.day <= 04)) {
-            sample_space = 'HappyNewYear' + (easter_egg.year + (easter_egg.month != 0)) + '!!!';
-            idx = row % sample_space.length;
-        }
+        let idx = 0;
+        do {
+            idx = Math.floor(Math.random() * space.length);
+        } while(easter_egg.last_easter_egg === idx);
+
+        easter_egg_text = space[idx];
+        easter_egg.last_easter_egg = idx;
     }
+
+    if (!easter_egg_text.length) {
+        return;
+    }
+
+    let easter_egg_banner = [
+        ' '.repeat(easter_egg_text.length + 2),
+        ' ' + easter_egg_text + ' ',
+        ' '.repeat(easter_egg_text.length + 2),
+    ];
+
+    for (var i = 0; i < 5; i++) {
+        let a = screen.height;
+        let row = Math.floor(Math.random() * (a - easter_egg_banner.length));
+        let b = (screen.width / 2) - easter_egg_banner[0].length;
+        let easter_egg_start = Math.floor(Math.random() * b) * 2;
+        let easter_egg_end = easter_egg_start + 2 * easter_egg_banner[0].length;
+        let retry = false;
+
+        // If the banner center line will overlap the other, change position
+        for (var col = easter_egg_start; col < easter_egg_end; col += 2) {
+            if (serialize_coord(row + 1, col) in easter_egg.banner) {
+                retry = true;
+            }
+        }
+
+        if (retry) {
+            continue;
+        }
+
+        for (var line = 0; line < easter_egg_banner.length; line++) {
+            for (var col = easter_egg_start; col < easter_egg_end; col += 2) {
+                let ch = easter_egg_banner[line][Math.floor((col - easter_egg_start) / 2)];
+                easter_egg.banner[serialize_coord(row + line, col)] = ch;
+            }
+        }
+        break;
+    }
+}
+
+
+function serialize_coord (row, col) {
+    return [row, col].join(',')
+}
+
+
+function rand_char (row, col) {
+    let sample_space = '1234567890-=!@#$%^&*()+qwertyuiop[]QWERTYUIOP{}asdfghjkl;ASDFGHJKL:zxcvbnm/ZXCVBNM<>?';
+    let idx = Math.floor(Math.random() * sample_space.length);
 
     return sample_space[idx];
 }
@@ -232,15 +322,6 @@ function rand_head () {
 
 function rand_len () {
     return Math.floor(Math.random() * (screen.height * 4 / 5) + screen.height / 8);
-}
-
-
-function rand_gold () {
-    if (easter_egg.trigger) {
-        easter_egg.trigger = false;
-        return true;
-    }
-    return (Math.floor(Math.random() * 300) == 0) ? true : false;
 }
 
 
@@ -281,6 +362,12 @@ function next_frame () {
     easter_egg.year = today.getFullYear();
     easter_egg.month = today.getMonth();
     easter_egg.day = today.getDate();
+
+    if (easter_egg.month == 11 && easter_egg.day == 25) {
+        easter_egg.christmas = true;
+    } else if ((easter_egg.month == 11 && easter_egg.day >= 29) || (easter_egg.month == 0 && easter_egg.day <= 04)) {
+        easter_egg.new_year = true;
+    }
 
     screen.frame_timer = setTimeout(next_frame, frame_delay_min);
 }
