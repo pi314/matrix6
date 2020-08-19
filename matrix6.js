@@ -121,9 +121,9 @@ $(function init () {
         } else if (key == 'new_year' && (typeof val == typeof true || typeof val == typeof 1)) {
             easter_egg.new_year = val;
 
-        } else if (key == 'char' && (typeof val == typeof '')) {
+        } else if (key == 'char') {
             try {
-                char_space = decodeURIComponent(val);
+                char_space = decodeURIComponent(tmp[1]);
             } catch (e) {
                 if (typeof e === typeof URIError()) {
                     console.log('Invalid string:', val);
