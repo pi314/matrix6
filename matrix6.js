@@ -201,8 +201,18 @@ function toggle_pause () {
 function soft_reset () {
     var window_width = window.innerWidth;
     var window_height = window.innerHeight;
-    var text_width = $('#sample').width();
-    var text_height = $('#sample').height();
+
+    var cell_width = $('#sample').width();
+    var cell_height = $('#sample').height();
+
+    char_space.split('').forEach(function (elem) {
+        $('#sample').text(elem);
+        cell_width = Math.max(cell_width, $('#sample').width());
+        cell_height = Math.max(cell_height, $('#sample').height());
+    });
+
+    console.log('cell width =', cell_width);
+    console.log('cell height =', cell_height);
 
     var screen_height_old = 0;
 
@@ -210,8 +220,8 @@ function soft_reset () {
         screen_height_old = screen.height;
     }
 
-    screen.width = Math.floor(window_width / text_width);
-    screen.height = Math.floor(window_height / text_height);
+    screen.width = Math.floor(window_width / cell_width);
+    screen.height = Math.floor(window_height / cell_height);
 
     // Cut off unnecessary rows
     for (var r = screen.height; r < screen.cell.length; r++) {
@@ -247,6 +257,7 @@ function soft_reset () {
             new_col = true;
             screen.cell[r][c] = $('<span class="cell black">');
             screen.cell[r][c].text('|');
+            screen.cell[r][c].width(cell_width).height(cell_height);
             row.append(screen.cell[r][c]);
         }
 
