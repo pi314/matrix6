@@ -305,7 +305,7 @@ function sample (sample_space) {
 
 function easter_egg_trigger () {
     let easter_egg_sample_space = [
-        'You are good',
+        "You're great",
         'Be nice to yourself',
         "Don't worry",
         'Everything will be fine',
