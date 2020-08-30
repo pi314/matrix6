@@ -12,7 +12,8 @@ var screen = {
     cell: [],
     flow: [],
     paused: false,
-    theme: 'green',
+    themes: ['green', 'cyan'],
+    cur_theme: '',
     frame_timer: undefined,
     user: {
         pause: false,
@@ -66,7 +67,7 @@ function flow (col, head, len, visible) {
                 classes.push('gold');
 
             } else {
-                classes.push(screen.theme);
+                classes.push(screen.cur_theme);
                 screen.cell[this.head][this.col].text(sample(char_space));
             }
 
@@ -100,6 +101,10 @@ $(function init () {
 
     var param = window.location.search.replace(/^\?/g, '').split('&');
     for (let i in param) {
+        if (param[i] == '') {
+            continue;
+        }
+
         var tmp = param[i].split('=');
         var key = tmp[0].toLowerCase();
         try {
@@ -121,7 +126,7 @@ $(function init () {
         } else if (key == 'new_year' && (typeof val == typeof true || typeof val == typeof 1)) {
             easter_egg.new_year = val;
 
-        } else if (key == 'char') {
+        } else if (key == 'chars') {
             try {
                 char_space = decodeURIComponent(tmp[1]);
             } catch (e) {
@@ -132,6 +137,13 @@ $(function init () {
                 }
             }
 
+        } else if (key == 'themes') {
+            screen.themes = tmp[1].split(',').filter(function (theme) {
+                return ([
+                    'gold', 'red', 'orange', 'yellow', 'green', 'cyan', 'magenta', 'white', 'blue',
+                ].indexOf(theme) > 0)
+            });
+
         } else {
             console.log('Unknown option:', key);
         }
@@ -140,10 +152,18 @@ $(function init () {
     console.log('delay =', frame_delay_min);
     console.log('christmas =', easter_egg.christmas);
     console.log('new_year =', easter_egg.new_year);
-    console.log('char =', char_space);
+    console.log('chars =', char_space);
+    console.log('themes =', screen.themes.join(', '));
 
     screen.root = $('#screen');
     screen.root.empty();
+
+    if (screen.themes.length < 1) {
+        screen.themes = ['green', 'cyan'];
+    }
+    if (screen.themes.indexOf(screen.cur_theme) == -1) {
+        screen.cur_theme = screen.themes[0];
+    }
 
     soft_reset();
 
@@ -167,11 +187,11 @@ $(function init () {
                 return;
             }
 
-            if (screen.theme == 'green') {
-                screen.theme = 'cyan';
-            } else {
-                screen.theme = 'green';
+            let idx = screen.themes.indexOf(screen.cur_theme);
+            if (idx == -1) {
+                idx = screen.themes.length - 1;
             }
+            screen.cur_theme = screen.themes[(idx + 1) % screen.themes.length];
             return;
         }
 

@@ -37,38 +37,38 @@ body {
 }
 
 
-.green.bright {
-    color: #00dd00;
-    text-shadow: lime 0 0 5px;
-}
-
-
-.green.dark {
-    color: green;
-    text-shadow: green 0 0 5px;
-}
-
-
-.green.head {
-    color: lightgray;
-    text-shadow: lime 0 0 5px;
-}
-
+/* ========================================================================= */
+/* Themes */
+/* ------------------------------------------------------------------------- */
 
 .gold.bright {
     color: #ffff00;
     text-shadow: #ffff00 0 0 5px;
 }
 
-
 .gold.dark {
     color: #CCCC00;
 }
 
-
 .gold.head {
     color: white;
     text-shadow: white 0 0 5px;
+}
+
+
+.green.bright {
+    color: #00dd00;
+    text-shadow: lime 0 0 5px;
+}
+
+.green.dark {
+    color: green;
+    text-shadow: green 0 0 5px;
+}
+
+.green.head {
+    color: lightgray;
+    text-shadow: lime 0 0 5px;
 }
 
 
@@ -77,13 +77,105 @@ body {
     text-shadow: cyan 0 0 5px;
 }
 
-
 .cyan.dark {
     color: #00cccc;
 }
 
-
 .cyan.head {
+    color: white;
+    text-shadow: cyan 0 0 5px;
+}
+
+
+.blue.bright {
+    color: blue;
+    text-shadow: blue 0 0 5px;
+}
+
+.blue.dark {
+    color: #0000dd;
+}
+
+.blue.head {
+    color: lightgray;
+    text-shadow: blue 0 0 5px;
+}
+
+
+.red.bright {
+    color: red;
+    text-shadow: red 0 0 5px;
+}
+
+.red.dark {
+    color: #cc0000;
+}
+
+.red.head {
+    color: lightgray;
+    text-shadow: red 0 0 5px;
+}
+
+
+.orange.bright {
+    color: orange;
+    text-shadow: orange 0 0 5px;
+}
+
+.orange.dark {
+    color: #cc6600;
+}
+
+.orange.head {
+    color: lightgray;
+    text-shadow: orange 0 0 5px;
+}
+
+
+.yellow.bright {
+    color: yellow;
+    text-shadow: yellow 0 0 5px;
+}
+
+.yellow.dark {
+    color: #cccc00;
+}
+
+.yellow.head {
+    color: lightgray;
+    text-shadow: yellow 0 0 5px;
+}
+
+
+.magenta.bright {
+    color: magenta;
+    text-shadow: magenta 0 0 5px;
+}
+
+.magenta.dark {
+    color: #cc00cc;
+}
+
+.magenta.head {
+    color: lightgray;
+    text-shadow: magenta 0 0 5px;
+}
+
+
+.white.bright {
+    color: lightgray;
+    text-shadow: lightgray 0 0 5px;
+}
+
+.white.dark {
+    color: #bbbbbb;
+}
+
+.white.head {
     color: white;
     text-shadow: white 0 0 5px;
 }
+
+/* ------------------------------------------------------------------------- */
+/* Themes */
+/* ========================================================================= */
