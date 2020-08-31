@@ -32,7 +32,7 @@ body {
 }
 
 
-.black {
+.hidden {
     visibility: hidden;
 }
 
@@ -41,13 +41,13 @@ body {
 /* Themes */
 /* ------------------------------------------------------------------------- */
 
-.gold.bright {
-    color: #ffff00;
-    text-shadow: #ffff00 0 0 5px;
+.gold.dark {
+    color: #ccaa22
 }
 
-.gold.dark {
-    color: #CCCC00;
+.gold.bright {
+    color: #ffdd33;
+    text-shadow: #ffdd33 0 0 5px;
 }
 
 .gold.head {
@@ -56,14 +56,14 @@ body {
 }
 
 
-.green.bright {
-    color: #00dd00;
-    text-shadow: lime 0 0 5px;
-}
-
 .green.dark {
     color: green;
     text-shadow: green 0 0 5px;
+}
+
+.green.bright {
+    color: #00dd00;
+    text-shadow: lime 0 0 5px;
 }
 
 .green.head {
@@ -72,13 +72,13 @@ body {
 }
 
 
+.cyan.dark {
+    color: #00cccc;
+}
+
 .cyan.bright {
     color: cyan;
     text-shadow: cyan 0 0 5px;
-}
-
-.cyan.dark {
-    color: #00cccc;
 }
 
 .cyan.head {
@@ -87,13 +87,13 @@ body {
 }
 
 
+.blue.dark {
+    color: #0000dd;
+}
+
 .blue.bright {
     color: blue;
     text-shadow: blue 0 0 5px;
-}
-
-.blue.dark {
-    color: #0000dd;
 }
 
 .blue.head {
@@ -102,13 +102,13 @@ body {
 }
 
 
+.red.dark {
+    color: #cc0000;
+}
+
 .red.bright {
     color: red;
     text-shadow: red 0 0 5px;
-}
-
-.red.dark {
-    color: #cc0000;
 }
 
 .red.head {
@@ -117,13 +117,13 @@ body {
 }
 
 
+.orange.dark {
+    color: #cc6600;
+}
+
 .orange.bright {
     color: orange;
     text-shadow: orange 0 0 5px;
-}
-
-.orange.dark {
-    color: #cc6600;
 }
 
 .orange.head {
@@ -132,13 +132,13 @@ body {
 }
 
 
+.yellow.dark {
+    color: #cccc00;
+}
+
 .yellow.bright {
     color: yellow;
     text-shadow: yellow 0 0 5px;
-}
-
-.yellow.dark {
-    color: #cccc00;
 }
 
 .yellow.head {
@@ -147,13 +147,13 @@ body {
 }
 
 
+.magenta.dark {
+    color: #cc00cc;
+}
+
 .magenta.bright {
     color: magenta;
     text-shadow: magenta 0 0 5px;
-}
-
-.magenta.dark {
-    color: #cc00cc;
 }
 
 .magenta.head {
@@ -162,18 +162,33 @@ body {
 }
 
 
+.white.dark {
+    color: #909090;
+}
+
 .white.bright {
     color: lightgray;
     text-shadow: lightgray 0 0 5px;
 }
 
-.white.dark {
-    color: #bbbbbb;
-}
-
 .white.head {
     color: white;
     text-shadow: white 0 0 5px;
+}
+
+
+.black.dark {
+    color: #303030;
+}
+
+.black.bright {
+    color: #606060;
+    text-shadow: gray 0 0 5px;
+}
+
+.black.head {
+    color: #909090;
+    text-shadow: gray 0 0 5px;
 }
 
 /* ------------------------------------------------------------------------- */

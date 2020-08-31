@@ -84,7 +84,7 @@ function flow (col, head, len, visible) {
             } else if (typeof easter_egg.banner[key] === 'number') {
 
             } else {
-                screen.cell[this.tail][this.col].addClass('black');
+                screen.cell[this.tail][this.col].addClass('hidden');
             }
         }
         this.tail++;
@@ -138,11 +138,16 @@ $(function init () {
             }
 
         } else if (key == 'themes') {
-            screen.themes = tmp[1].split(',').filter(function (theme) {
+            let param_themes = tmp[1].split(',').filter(function (theme) {
                 return ([
-                    'gold', 'red', 'orange', 'yellow', 'green', 'cyan', 'magenta', 'white', 'blue',
-                ].indexOf(theme) > 0)
+                    'gold', 'red', 'orange', 'yellow', 'green', 'blue', 'cyan', 'magenta', 'white', 'black',
+                ].indexOf(theme) >= 0)
             });
+
+            if (param_themes.length > 0) {
+                screen.themes = param_themes;
+            }
+            console.log(screen.themes.indexOf(screen.cur_theme));
 
         } else {
             console.log('Unknown option:', key);
@@ -154,17 +159,12 @@ $(function init () {
     console.log('new_year =', easter_egg.new_year);
     console.log('chars =', char_space);
     console.log('themes =', screen.themes.join(', '));
-
-    screen.root = $('#screen');
-    screen.root.empty();
-
-    if (screen.themes.length < 1) {
-        screen.themes = ['green', 'cyan'];
-    }
     if (screen.themes.indexOf(screen.cur_theme) == -1) {
         screen.cur_theme = screen.themes[0];
     }
 
+    screen.root = $('#screen');
+    screen.root.empty();
     soft_reset();
 
     screen.frame_timer = setTimeout(next_frame, frame_delay_min);
@@ -275,7 +275,7 @@ function soft_reset () {
 
         for (var c = screen.cell[r].length; c < screen.width; c++) {
             new_col = true;
-            screen.cell[r][c] = $('<span class="cell black">');
+            screen.cell[r][c] = $('<span class="cell hidden">');
             screen.cell[r][c].text('|');
             screen.cell[r][c].width(cell_width).height(cell_height);
             row.append(screen.cell[r][c]);
