@@ -143,11 +143,16 @@ $(function init () {
             }
 
         } else if (key == 'themes') {
+            let supported_themes = [
+                    'green', 'gold', 'red', 'orange', 'yellow', 'blue', 'cyan', 'magenta', 'white', 'black',
+                ]
             let param_themes = tmp[1].split(',').filter(function (theme) {
-                return ([
-                    'gold', 'red', 'orange', 'yellow', 'green', 'blue', 'cyan', 'magenta', 'white', 'black',
-                ].indexOf(theme) >= 0)
+                return (supported_themes.indexOf(theme) >= 0)
             });
+
+            if (tmp[1] == 'all') {
+                param_themes = supported_themes;
+            }
 
             if (param_themes.length > 0) {
                 screen.themes = param_themes;

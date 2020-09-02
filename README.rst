@@ -15,6 +15,7 @@ URL Parameters
 * ``char=str`` charaster space
 * ``themes=green,cyan`` select enabled color themes
 
-  - Valid values: ``red``, ``orange``, ``gold``, ``yellow``, ``green``, ``blue``, ``cyan``, ``magenta``, ``white``, ``black``
+  - Valid values: ``green``, ``gold``, ``red``, ``orange``, ``yellow``, ``blue``, ``cyan``, ``magenta``, ``white``, ``black``
+  - ``all`` is a shortcut of all themes above
 
 * ``theme_trans=0`` set the transition time (in seconds) between themes
