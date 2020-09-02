@@ -19,6 +19,7 @@ var screen = {
     frame_timer: undefined,
     theme_timer: undefined,
     single_click_timer: undefined,
+    timestamp: 0,
 
     user: {
         pause: false,
@@ -471,21 +472,34 @@ function rand_len () {
 
 function frame_timer_start () {
     if (!screen.frame_timer) {
-        screen.frame_timer = setTimeout(draw_frame, screen.frame_delay);
+        // screen.frame_timer = setTimeout(draw_frame, screen.frame_delay);
+        screen.frame_timer = window.requestAnimationFrame(draw_frame);
+
+    } else {
+        console.log('screen.frame_timer already set, skip');
     }
 }
 
 
 function frame_timer_stop () {
     if (screen.frame_timer) {
-        clearTimeout(screen.frame_timer);
+        // clearTimeout(screen.frame_timer);
+        window.cancelAnimationFrame(screen.frame_timer);
         screen.frame_timer = undefined;
     }
 }
 
 
 function draw_frame () {
-    frame_timer_stop();
+    console.log('draw_frame');
+    screen.frame_timer = undefined;
+
+    if ((new Date().getTime() - screen.timestop) < screen.frame_delay) {
+        frame_timer_start();
+        return;
+    }
+
+    screen.timestop = new Date().getTime();
 
     if (screen.user.pause) {
         // User wants to pause
