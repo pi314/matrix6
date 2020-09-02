@@ -1,4 +1,4 @@
-var frame_delay_min = 70;
+var config_frame_delay = 70;
 var frame_delay_resize = 500;
 var double_click_delay = 200;
 var easter_egg_banner_durability = 3;   // How many flows could wash a banner
@@ -11,15 +11,19 @@ var screen = {
     root: undefined,
     cell: [],
     flow: [],
-    paused: false,
     themes: ['green', 'cyan'],
     cur_theme: '',
+
+    frame_delay: config_frame_delay,
+    theme_trans: 0,
     frame_timer: undefined,
+    theme_timer: undefined,
+    single_click_timer: undefined,
+
     user: {
         pause: false,
         resized: false,
         double_click: false,
-        single_click_timer: undefined,
     },
 };
 
@@ -119,7 +123,7 @@ $(function init () {
         }
 
         if (key == 'delay' && (typeof val == typeof 1)) {
-            frame_delay_min = Math.max(30, val);
+            config_frame_delay = Math.max(30, val);
 
         } else if (key == 'christmas' && (typeof val == typeof true || typeof val == typeof 1)) {
             easter_egg.christmas = val;
@@ -148,27 +152,30 @@ $(function init () {
             if (param_themes.length > 0) {
                 screen.themes = param_themes;
             }
-            console.log(screen.themes.indexOf(screen.cur_theme));
+
+        } else if (key == 'theme_trans' && (typeof val == typeof 1)) {
+            screen.theme_trans = val;
 
         } else {
             console.log('Unknown option:', key);
         }
     }
 
-    console.log('delay =', frame_delay_min);
+    console.log('delay =', config_frame_delay);
     console.log('christmas =', easter_egg.christmas);
     console.log('new_year =', easter_egg.new_year);
     console.log('chars =', char_space);
     console.log('themes =', screen.themes.join(', '));
+    console.log('theme transition time =', screen.theme_trans);
     if (screen.themes.indexOf(screen.cur_theme) == -1) {
         screen.cur_theme = screen.themes[0];
     }
 
+    screen.frame_delay = config_frame_delay;
+
     screen.root = $('#screen');
     screen.root.empty();
     soft_reset();
-
-    screen.frame_timer = setTimeout(next_frame, frame_delay_min);
 
     $(window).resize(function () {
         screen.user.resized = true;
@@ -181,40 +188,71 @@ $(function init () {
         }
 
     }).mousedown(function () {
-        if (screen.user.single_click_timer) {
-            clearTimeout(screen.user.single_click_timer);
-            screen.user.single_click_timer = undefined;
-            if (screen.paused) {
-                return;
-            }
-
-            let idx = screen.themes.indexOf(screen.cur_theme);
-            if (idx == -1) {
-                idx = screen.themes.length - 1;
-            }
-            screen.cur_theme = screen.themes[(idx + 1) % screen.themes.length];
+        if (!screen.single_click_timer) {
+            screen.single_click_timer = setTimeout(function () {
+                screen.single_click_timer = undefined;
+                toggle_pause();
+            }, double_click_delay);
             return;
         }
 
-        screen.user.single_click_timer = setTimeout(function () {
-            screen.user.single_click_timer = undefined;
-            toggle_pause();
-        }, double_click_delay);
+        // Double clicked
+        clearTimeout(screen.single_click_timer);
+        screen.single_click_timer = undefined;
+        if (!screen.user.pause) {
+            next_theme();
+        }
     });
+
+    frame_timer_start();
+    theme_timer_start();
 });
 
 
-function toggle_pause () {
-    if (screen.user.pause != screen.paused) {
+function theme_timer_start () {
+    if (screen.theme_timer) {
+        console.log('theme timer already start, skip');
         return;
     }
+    if (screen.theme_trans) {
+        console.log('theme timer start');
+        screen.theme_timer = setTimeout(next_theme, screen.theme_trans * 1000);
+    }
+}
 
+
+function theme_timer_stop () {
+    if (screen.theme_timer) {
+        console.log('theme timer stop');
+        clearTimeout(screen.theme_timer);
+        screen.theme_timer = undefined;
+    }
+}
+
+
+function next_theme () {
+    theme_timer_stop();
+
+    console.log('next_theme');
+
+    let idx = screen.themes.indexOf(screen.cur_theme);
+    if (idx == -1) {
+        idx = screen.themes.length - 1;
+    }
+    screen.cur_theme = screen.themes[(idx + 1) % screen.themes.length];
+
+    theme_timer_start();
+}
+
+
+function toggle_pause () {
     screen.user.pause = !screen.user.pause;
-    if (!screen.user.pause && screen.paused) {
-        if (screen.frame_timer) {
-            clearTimeout(screen.frame_timer);
-        }
-        screen.frame_timer = setTimeout(next_frame, frame_delay_min);
+
+    if (screen.user.pause) {
+        theme_timer_stop();
+    } else {
+        theme_timer_start();
+        frame_timer_start();
     }
 }
 
@@ -426,20 +464,53 @@ function rand_len () {
 }
 
 
-function next_frame () {
-    screen.frame_timer = undefined;
-    screen.paused = false;
+function frame_timer_start () {
+    if (!screen.frame_timer) {
+        screen.frame_timer = setTimeout(draw_frame, screen.frame_delay);
+    }
+}
+
+
+function frame_timer_stop () {
+    if (screen.frame_timer) {
+        clearTimeout(screen.frame_timer);
+        screen.frame_timer = undefined;
+    }
+}
+
+
+function draw_frame () {
+    frame_timer_stop();
 
     if (screen.user.pause) {
-        screen.paused = true;
-        return;
+        // User wants to pause
+        let frame_rate = 1000 / screen.frame_delay;
+        frame_rate -= 1;
+
+        if (frame_rate <= 3) {
+            return;
+        }
+
+        screen.frame_delay = 1000 / frame_rate;
+        console.log('frame delay change:', screen.frame_delay);
+
+    } else if (screen.frame_delay > config_frame_delay) {
+        // User wants to continue
+        let frame_rate = 1000 / screen.frame_delay;
+        frame_rate += 1;
+
+        screen.frame_delay = 1000 / frame_rate;
+
+        screen.frame_delay = Math.max(screen.frame_delay, config_frame_delay);
+
+        console.log('frame delay change:', screen.frame_delay);
     }
 
     if (screen.user.resized) {
         soft_reset();
         screen.user.resized = false;
 
-        screen.frame_timer = setTimeout(next_frame, frame_delay_resize);
+        frame_timer_start();
         return;
     }
 
@@ -470,5 +541,5 @@ function next_frame () {
         easter_egg.new_year = true;
     }
 
-    screen.frame_timer = setTimeout(next_frame, frame_delay_min);
+    frame_timer_start();
 }

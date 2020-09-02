@@ -16,3 +16,5 @@ URL Parameters
 * ``themes=green,cyan`` select enabled color themes
 
   - Valid values: ``red``, ``orange``, ``gold``, ``yellow``, ``green``, ``blue``, ``cyan``, ``magenta``, ``white``, ``black``
+
+* ``theme_trans=0`` set the transition time (in seconds) between themes
