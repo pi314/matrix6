@@ -325,6 +325,7 @@ function sample (sample_space) {
 
 function easter_egg_trigger () {
     let easter_egg_sample_space = [
+        'Easter Egg!',
         "You're great",
         'Be nice to yourself',
         "Don't worry",
@@ -333,8 +334,17 @@ function easter_egg_trigger () {
         'Follow your heart',
         'Dawn will come',
         'Stay determined',
-        'Have a nice day',
+        "I'm with you",
     ];
+
+    // Control the first triggered easter egg text
+    if (easter_egg.last_easter_egg === undefined) {
+        easter_egg_sample_space = ['Easter Egg'];
+    } else if (easter_egg.last_easter_egg == 'Easter Egg') {
+        easter_egg_sample_space = ['Easter Egg?'];
+    } else if (easter_egg.last_easter_egg == 'Easter Egg?') {
+        easter_egg_sample_space = ['Easter Egg!'];
+    }
 
     let ary = range(0, easter_egg_sample_space.length * 2);
     if (easter_egg.christmas) {
