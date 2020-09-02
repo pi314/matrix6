@@ -98,6 +98,7 @@ function flow (col, head, len, visible) {
 
 $(function init () {
     console.log('https://github.com/pi314/matrix6/');
+    console.log('Press Enter to trigger easter egg');
 
     var param = window.location.search.replace(/^\?/g, '').split('&');
     for (let i in param) {
