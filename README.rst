@@ -12,7 +12,7 @@ URL Parameters
 * ``delay=70`` in milliseconds
 * ``christmas=false`` enable / disable Christmas Easter egg
 * ``new_year=false`` enable / disable New Year Easter egg
-* ``char=str`` charaster space
+* ``chars=str`` charaster space
 * ``themes=green,cyan`` select enabled color themes
 
   - Valid values: ``green``, ``gold``, ``red``, ``orange``, ``yellow``, ``blue``, ``cyan``, ``magenta``, ``white``, ``black``
